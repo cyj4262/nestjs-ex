@@ -268,3 +268,25 @@ exprot class BoardsController {
 - Entities : 엔티티를 이용해서 데이터베이스 테이블을 생성해줍니다. 그래서 엔티티 파일이 어디에 있는지 설정해줍니다.
 - synchronize : true 값을 주면 애플리케이션을 다시 실행할 때 엔티티 안에서 수정된 컬럼의 길이 타입 변경값등을 해당 테이블을 Drop한 후 다시 생성해줍니다.
    
+## 게시물을 위한 엔티티(Entity) 생성하기
+- TypeORM을 사용할 때는 데이터베이스 테이블로 변환 되는 Class이기 때문에 위에 처럼 하지 않고 클래스를 생성한 후 그안에 컬럼들을 정의해주시면 됩니다.
+- @Entity : Entity() 데코레이터 클래스는 Board 클래스가 엔티티임을 나타내는데 사용됩니다.
+옵션을 사용하여 테이블 이름을 지정할 수 있습니다.
+@PrimaryGeneratedColumn(): id 필드를 정의하고, 자동으로 증가하는 기본키(primary key)를 설정합니다.
+@Column(): title, description 같은 필드를 정의합니다. @Column() 데코레이터를 사용하여 열(column)을 정의하고, 해당 필드의 데이터 타입을 지정합니다. 이 경우, author와 name 필드는 각각 string 타입입니다.
+@CreateDateColumn(): 생성될 때 자동으로 생성일자(createdAt)를 기록합니다.
+@UpdateDateColumn(): 업데이트될 때 자동으로 업데이트 일자(updatedAt)를 기록합니다.
+@DeleteDateColumn(): 삭제될 때 자동으로 삭제 일자(deletedAt)를 기록합니다. 이렇게 하면 실제로 데이터를 삭제하지 않고, 삭제된 데이터를 추적할 수 있습니다.
+
+## Repository 생성하기
+- repository : 리포지토리는 엔터티 개체와 함께 작동하며 엔티티 찾기, 삽입, 업데이트, 삭제 등을 처리합니다.
+1. 리포지토리 파일 생성하기
+- board.repository.ts
+2. 생성한 파일에 리포지토리를 위한 클래스 생성하기
+- 생성 시 Reopsitory 클래스를 Extends 해줍니다. (Find, Insert, Delete 등 엔티티를 컨트롤 해줄 수 있습니다.)
+- @EntityRepository()  
+- : 클래스를 사용자 정의(CUSTOM) 저장소로 선언하는데 사용됩니다. 
+- : 사용자 지정 저장소는 일부 특정 엔터티를 관리하거나 일반 저장소 일 수 있습니다.
+3. 생성한 Repository를 다른 곳에서도 사용할 수 있기 위해서 (Injectable) board.module에서 import 해줍니다.
+- board.module.ts
+
