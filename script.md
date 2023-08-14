@@ -290,3 +290,12 @@ exprot class BoardsController {
 3. 생성한 Repository를 다른 곳에서도 사용할 수 있기 위해서 (Injectable) board.module에서 import 해줍니다.
 - board.module.ts
 
+## 아이디를 이용해서 특정 게시물 가져오기
+- 이제는 메모리에서 데이터를 가져오는게 아닌 데이터베이스에서 가져오고 TypeOTM을 쓸 때는 Repository 패턴을 사용할 것이기 때문에
+- Board 서비스(service)에 Board 리포지터리(Repository)를 넣어주겠습니다. (Inject)
+- @InjectRepository : 이 데코레이터를 이용해서 이 서비스에서 BoardRepository를 이용한다고 이걸 boardRepository 변수에 넣어줍니다.
+
+## Service에서 getBoardById 메소드 생성하기
+- typeOrm 에서 제공하는 findOne 메소드 사용하기
+- astnc await을 이용해서 데이터베이스 작업이 끝난 후 결과값을 받을 수 있게 해주기
+
