@@ -151,4 +151,120 @@ exprot class BoardsController {
 - 이러한 경우에 DTO를 사용해서 이 문제를 해결해 줄 수 있습니다.
 
 ## Interface VS Class for DTO
-- DTO는 Interface 나 Class를 사용해서 
+- DTO는 Interface 나 Class를 사용해서 만들면 됩니다. 하지만 Class가 더 선호됩니다.
+
+## DTO 파일 작성
+- 클래스는 인터페이스와 다르게 런타임에서 작동하기 때문에 파이프 같은 기능을 이용할 때 더 유용합니다.
+- 그래서 클래스를 사용해서 DTO를 작성합니다.
+
+## DTO 적용하기
+- 이렇게 DTO를 만들었으면 실제 Controller와 Service에서 Dto를 적용하겠습니다.
+- 먼저 Controller에 적용하겠습니다. , Service
+
+## Pipe은 무엇인가요?
+- 파이프는 @Injectable() 데코레이터로 주석이 달린 클래스입니다.
+- 파이프는 data transformation과 data validation을 위해서 사용됩니다.
+- 파이프는 컨트롤러 경로 처리기에 의해 처리되는 인수에 대해 작동합니다.
+- Nest는 메소드가 호출되기 직전에 파이프를 삽입하고 파이프는 메소드로 향하는 인수를 수신하고 이에 대해 작동합니다.
+
+## Data Transformation?
+- 입력 데이터를 원하는형식으로 변환 (예: 문자열에서 정수로)
+- 만약 숫자를 받길 원하는데 문자열 형식으로 온다면 파이프에서 자동으로 숫자로 바꿔줍니다.
+- String to Integer EX) string'7' => Integer 7
+
+## Data Validation?
+- 입력 데이터를 평가하고 유효한 경우 변경되지 않은 상태로 전달하면 됩니다. 
+- 그렇지 않으면 데이터가 올바르지 않을 때 예외를 발생시킵니다.
+- 만약 이름의 길이가 10자 이하여야 하는데 10자 이상 되면 에러를 발생시킵니다.
+
+## 파이프는 위에 두가지 모든 경우에서...
+- 라우트 헨들러(Route Handler)가 처리하는 인수에 대해서 작동합니다.
+- 그리고 파이프는 메소드를 바로 직전에 작동해서 메소드로 향하는 인수에 대해서 변환 할 것이 있으면 변환하고 유효성 체크를 위해서도 호출됩니다.
+
+## PIPE 사용하는 법(Binding Pipes) 
+- 파이프를 사용하는 방법(Binding pipes)은 세가지로 나눠질수 있습니다.
+- Handler-level Pipes, Parameter-level Pipes, Global-level Pipes 입니다.
+- 이름에서 말하는 것 그대로 핸들러 레벨, 파라미터 레벨, 글로벌 레벨로 파이프를 사용할 수 있습니다.
+
+## Handler-level PIpes
+- 핸들러 레벨에서 @UsePipes() 데코레이터를 이용해서 사용할 수 있습니다.
+- 이 파이프는 모든 파라미터에 적용이 됩니다. 
+
+## Parameter-level Pipes
+- 파라미터 레벨의 파이프 이기에 특정한 파라미터에게만 적용이 되는 파이프 입니다.
+
+## Global pipes
+- 글로벌 파이프로서 애플리케이션레벨의 파이브 입니다.
+- 클라이언트에서 들어오는 모든 요청에 적용이 됩니다.
+- 가장 상단 영역인 main.ts에 넣어주시면 됩니다.
+
+## built-in pipes
+- Nest JS에 기본적으로 사용할 수 있게 만들어 놓은 6가지의 파이프가 있습니다.
+- ValidationPipe
+- ParseIntPipe
+- ParseBoolPipe
+- ParseArrayPipe
+- ParseUUIDPipe
+- DefaultValuePipe
+- 이름을 보면 각각의 파이프가 어떠한 역할을 하는지 짐작을 할 수 있습니다.
+
+## 특정 게시물을 찾을 때 없는 경우 결과 값 처리
+- 에러를 표출해주기 위해서는...
+- 에외 인스턴스를 생성해서 이용해주시면 됩니다.
+- NotFoundException()에 텍스트를 넣어주면 원하는 에러메세지를 출력할 수 있습니다.
+
+## 없는 게시물을 지우려 할 때 결과 값 처리
+- getBoardById를 이용해서 체크해준 후 에러면 처리하면 됩니다.
+
+## 커스텀 파이프를 이용한 유효성 체크
+
+### 커스텀 파이프 구현 방법
+- 먼저 PipeTransform이란 인터페이스를 새롭게 만들 커스텀 파이프에 구현해줘야 합니다.
+- 이 PipeTransform 인터페이스는 모든 파이프에서 구현해줘야하는 인터페이스입니다.
+- 그리고 이것과 함께 모든 파이프는 transform() 메소드를 필요합니다.
+- 이 메소드는 NestJS가 인자(arguments)를 처리하기 위해서 사용됩니다.
+
+### transform() 메소드
+- 이 메소드는 두개의 파라미터를 가집니다.
+- 첫번째 파라미터는 처리가 된 인자의 값(value)이며
+- 두번째 파라미터는 인자에 대한 메타 데이터를 포함한 객체입니다.
+- transform()메소드에서 Return된 값은 Route 핸들러로 전해집니다.
+
+## 실제로 value 와 metadata값 콘솔로 찍어보기
+1. 커스텀 파이프 생성
+2. 게시물에 업데이트 하는 핸들러에 커스텀 파이프 넣어주기
+3. 포스트 맨으로 요청 보내기
+
+## TypeORM (Object Relational Mapping)소개
+### TypeORM이란?
+- TypeORM은 node.js에서 실행되고 TypeScript로 작성된 객체 관계형 매퍼 라이브러리입니다.
+- TypeORM은 MySQL, PostgreSQL, MariaDAB, SQKite,MS SQL Server, Oracle, SAP Hana 및 WebSQL과 같은 여러 데이터버이스를 지원합니다.
+
+### ORM (Object Relational Mapping) 이란?
+- 객체와 관계형 데이터베이스의 데이터를 자동으로 변형 및 연결하는 작업입니다.
+- ORM을 이용한 개발은 객체와 데이터베이스의 변형에 유연한게 사용할 수 있습니다.
+
+
+### TypeORM 특징과 이점
+- 모델을 기반으로 데이터베이스 테이블 체계를 자동으로 생성합니다.
+- 데이터베이스에서 개체를 쉽게 삽입, 업데이트 및 삭제할 수 있습니다.
+- 테이블 간의 매필 (일대일, 일대다 및 다대다)을 만듭니다.
+- 간단한 CLI 명령을 제공합니다.
+- TypeORM은 간단한 코딩으로 ORM 프레임워크를 사용하기 쉽습니다.
+- TypeORM은 다른 모듈과 쉽게 통합됩니다.
+
+## TypeORM 애플리케이션에서 이용하기
+### TypeORM을 사용하기 위해서 설치해야하는 모듈들
+- @nestjs/typeorm : NestJS에서 TypeOrm을 사용하기 위해 연동시켜주는 모듈
+- typeorm : TypeORM 모듈
+- pg : Postgres 모듈
+- npm install pg typeorm @nestjs/typeorm --save
+
+### TypeORM 애플리케이션에 연결하기
+1. TypeORM 설정파일 생성
+2. TypeORM 설정파일 작성
+3. 루트 Module에서 Import 합니다. (app.module.ts)
+   
+- Entities : 엔티티를 이용해서 데이터베이스 테이블을 생성해줍니다. 그래서 엔티티 파일이 어디에 있는지 설정해줍니다.
+- synchronize : true 값을 주면 애플리케이션을 다시 실행할 때 엔티티 안에서 수정된 컬럼의 길이 타입 변경값등을 해당 테이블을 Drop한 후 다시 생성해줍니다.
+   
