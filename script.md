@@ -299,3 +299,15 @@ exprot class BoardsController {
 - typeOrm 에서 제공하는 findOne 메소드 사용하기
 - astnc await을 이용해서 데이터베이스 작업이 끝난 후 결과값을 받을 수 있게 해주기
 
+## 데이터베이스에 관련된 로직은 Repository로 이동 
+- Repository Pattern에 대해 배웠습니다.
+- 리포지토리 패턴은 서비스에 있는 데이터베이스 관련 로직을 Repository쪽으로 모아주면 됩니다.
+
+## remove() vs delete() ?
+- remove : 무조건 존재하는 아이템을 remove 메소드를 이용해서 지워야합니다. 그러지 않으면 에러가 발생합니다 (404 Error)
+- delete : 만약 아이템이 존재하면 지우고 존재하지 않으면 아무런 영향이 없습니다.
+- 이러한 차이 때문에 remove를 이용하면 하나의 아이템을 지울 때 두번 데이터베이스를 이용해야하기 때문에 (아이템 유무+지우기) 데이터베이스에 한번만 접근해도 되는 delete 메소드를 사용해주겠습니다.
+
+## 
+- 
+
