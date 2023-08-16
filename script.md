@@ -406,5 +406,29 @@ export class AuthModule { }
 1. Service 에서 SignIn 메소드에서 생성해주면 됩니다. auth 모듈에 JWT를 등록해주었기 때문에 Service에서 JWT를 가져올 수 있습니다.
 2. Token을 만드려면 Secret 과 Payload가 필요합니다. Payload에는 자신이 전달하고자 하는 정보를 넣어주시면 됩니다. Role 정보든, 유저 이름이든,
 
+## Passport, JWT 이용해서 토큰 인증 후 유저 정보 가져왹
+- 유저가 로그인 할 때 토큰 생성해줬는데 이제 그 유저가 요청을 보낼 때 그 요청 안에 있는 Header에 토큰을 넣어서 요청을 보내는데 요청 안에 Payload가 있습니다. 그리고 payload 안에 유저 이름을 넣어줬습니다.
+- 그리고 토큰이 유효한 토큰인지 서버에서 secret text를 이용해서 알아내면  payload 안에 유저 이름을 이용해서 데이터베이스 안에 있는 유저 이름에 해당하는 유저 정보를 모두 가져올 수 있습니다. 이러한 처리를 쉽게 해주는게 Passport 모듈입니다. 
+- 그래서 passport 모듈을 이용해서 이 부분을 구현해보겠습니다
+
+## NestJS에서 Middleware들에 대해서
+### Nest JS에는 여러가지 미들웨어가 있습니다
+- Pipes, Filters, Guards, Interceptors 등의 미들웨어로 취급되는 것들이 있는데 각각 다른 목적을 가지며 사용되고 있습니다.
+- pipes : 파이프는 요청 유효성 검사 및 페이로드 변환을 위해 만들어집니다. 데이터를 예상한 대로 직렬화합니다.
+- filters : 필터는 오류 처리 미들웨어입니다. 특정 오류 처리기를 사용할 경로와 각 경로 주변의 복잡성을관리하는 방법을 알 수 있습니다.
+- guards : 가드는 인증 미들웨어입니다. 지정한 경로로 통과할 수 있는 사람과 허용되지 않는 사람을 서버에 알려줍니다.
+- Interceptors : 인터셉터는 응답 매핑 및 캐시 관리와 함께 요청 로깅과 같은 전후 미들웨어 입니다. 각 요청 전후에 이를 실행하는 기능은 매우 강력하고 유용합니다. 
+
+### 각각의 미들웨어가 불러지는(called) 순서
+- middleware -> guard -> interceptor (before) -> pipe -> controller -> service -> controller -> interceptor (after) -> filter (if applicable) -> client
+
+## 커스텀 데코레이터 사용
+- req.user가 아닌 바로 user 라는 파라미터로 가져올 수 있습니다.
+
+## 인증된 유저만 게시물 보고 쓸 수 있게 만들기
+### 유저에게 게시물 접근 권한 주기
+1. 인증에 관한 모듈을 board 모듈에서 쓸 수 있어야 하기에 board module에서 인증 모듈 import 해오기 (이렇게 되면 AuthModule에서 export 하는 어떠한 것이든 board Module 에서 사용 가능하게 됩니다.)
+2.UseGuards(AuthGuard())를 이용해서 이 사람이 요청을 줄 때 올바른 토큰을 가지고 요청을 주는지 본 후에 게시물에 접근 할 권한을 줍니다. 그리고 이 AuthGuard는 각각의 라우트 별로 줄 수도 있고 한번에 하나의 컨트롤러 안에 들어있는 모든 라우트에 줄 수도 있습니다. 
+- board 컨트롤러 안에 있는 모든 라우트에 AuthGoard를 적용해 보겠습니다.
 
 
