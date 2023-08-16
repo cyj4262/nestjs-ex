@@ -339,5 +339,72 @@ exprot class BoardsController {
 - 그 이유는 NestJS에서 에러가 발생하고 그걸 try catch 구문인 catch에서 잡아주지 않는다면 이 에러가 controller 레벨에 가서 그냥 500 에러를 던져버립니다.
 - 이러한 이유 때문에 try catch 구문으로 에러를 잡아줘야합니다.
 
-### Try Catch
-- 
+## 비밀번호 암호화 하기
+- 유저를 생성할 때 현재는 비밀번호가 그대로 데이터베이스에 저장됩니다. 
+- 그래서 미밀번호를 암호화 해서 저장을 하는 부분을 구현해주겠습니다.
+### bcryptjs
+- npm install bcryptjs --save
+- import * as bcrypt from 'bcryptjs';
+
+### 비밀번호 데이터에 저장하는 방법
+1. 원본 비밀번호를 저장(최악)
+2. 비밀번호를 암호화 키(Encryption Key)와 함께 암호화 (양방향)
+- 어떠한 암호를 이용해서 비밀번호를 암호화 하고 그 암호를 이용하여 복호화도 가능
+- 암호화 키가 노출되면 알고리즘은 대부분 오픈 되어있기 때문에 위험도 높음
+3. SHA256등으로 해시(Hash)해서 저장(단방향)
+- 레인보우 테이블을 만들어서 암호화된 비밀번호를 비교해서 비밀번호 알아냄
+4. 솔트(salt) + 비밀번호(Plain Password)를 해시Hash로 암호화 해서 저장
+- 암호화할 때 원래 비밀번호에다 salt를 붙인 후에 해시로 암호화를 한다.
+
+## JWT에 대하여
+- 로그인을 할 때 그 로그인한 고유 유저를 위한 토큰은 생성해야 하는데 그 토큰을 생성할 때 JWT라는 모듈을 사용합니다.
+- 이 JWT 모듈에 대해서 알아보겠습니다.
+### JWT란 무엇인가요?
+- JWT(JSON Web Token)는 당사자간에 정보를 JSON 개체로 안전하게 전송하기 위한 컴팩트하고 독립적인 방식을 정의하는 개방형 표준입니다.
+- 이 정보는 디지털 서명이 되어 있으므로 확인하고 신뢰할 수 있습니다.
+- 간단하게 얘기하자면 정보를 안전하게 전할 때 혹은 유저의 권한 같은 것을 체크를 하기 위해서 사용하는데 유용한 모듈입니다.
+
+### JWT 구조
+- Header : 토큰에 대한 메타 데이터를 포함하고 있습니다.
+- Payload : 유저 정보(issuer), 만료 기간(expiration time), 주제(subject) 등등...
+- Verify Signature : JWT의 마지막 세그먼트는 토큰이 보낸 사람에 의해 서명되었으며 어떤 식으로든 변경되지 않았는지 확인하는 데 사용되는 서명입니다. 
+- 서명은 헤더 및 페이로드 세그먼트, 서명 알고리즘, 비밀 또는 공개 키를 사용하여 생성됩니다.
+
+## JWT를 이용해서 토큰 생성하기
+- passport 모듈도 함께 사용할 것
+### 필요한 모듈들 설치
+- @nestjs/jwt , @nestjs/passport , passport, passport-jwt
+- => npm install @nestjs/jwt @nestjs/passport passport passport-jwt --save
+
+### 애플리케이션에 JWT 모듈 등록하기
+1. auth 모듈 imports에 넣어주기
+
+```
+@Module({
+    imports: [
+        JwtModule.register({
+            secret: 'Secret1234',
+            signOptions:{
+                expiresIn: 60 * 60,
+            }
+        }),
+        TypeOrmExModule.forCustomRepository([UserRepository])
+  ],
+  controllers: [AuthController],
+  providers: [AuthService]
+})
+export class AuthModule { }
+```
+- Secret : 토큰을 만들 때 이용하는 Secret 텍스트 (아무 텍스트나 넣어줘도 됩니다)
+- ExpiresIn : 정해진 시간 이후에는 토큰이 유효하지 않게 됩니다. 60 * 60 은 한시간 이후에는 이 토큰이 더 이상 유효하지 않게 됩니다.
+
+### 애플리케이션에 Passport 모듈 등록하기
+- auth 모듈 imports에 넣어주기
+- " PassportModule.register({ defaultStrategy: 'jwt' }), " 문구 추가
+
+### 로그인 성공 시 JWT를 이용해서 토큰 생성해주기!!
+1. Service 에서 SignIn 메소드에서 생성해주면 됩니다. auth 모듈에 JWT를 등록해주었기 때문에 Service에서 JWT를 가져올 수 있습니다.
+2. Token을 만드려면 Secret 과 Payload가 필요합니다. Payload에는 자신이 전달하고자 하는 정보를 넣어주시면 됩니다. Role 정보든, 유저 이름이든,
+
+
+
