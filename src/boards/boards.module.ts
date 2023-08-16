@@ -4,10 +4,11 @@ import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { BoardRepository } from './board.repository';
 import { Board } from './board.entity';
+import { TypeOrmExModule } from './typeorm-ex.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Board])
+    TypeOrmExModule .forCustomRepository([BoardRepository])
   ],
   controllers: [BoardsController],
   providers: [BoardsService]
