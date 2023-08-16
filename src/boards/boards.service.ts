@@ -6,12 +6,13 @@ import { BoardStatus } from './board-status.enum';
 import { v1 as uuid } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './board.entity';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class BoardsService {
     constructor(private boardRepository: BoardRepository) { }
 
-    async getAllBoards(): Promise<Board[]>{
+    async getAllBoards(): Promise<Board[]> {
         return this.boardRepository.find();
     }
     // getAllBoards(): Board[] {
@@ -33,8 +34,8 @@ export class BoardsService {
     //     return board;
     // }
 
-    async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
-        return this.boardRepository.createBoard(createBoardDto);
+    async createBoard(createBoardDto: CreateBoardDto, user: User): Promise<Board> {
+        return this.boardRepository.createBoard(createBoardDto, user);
 
     }
 
