@@ -308,6 +308,19 @@ exprot class BoardsController {
 - delete : 만약 아이템이 존재하면 지우고 존재하지 않으면 아무런 영향이 없습니다.
 - 이러한 차이 때문에 remove를 이용하면 하나의 아이템을 지울 때 두번 데이터베이스를 이용해야하기 때문에 (아이템 유무+지우기) 데이터베이스에 한번만 접근해도 되는 delete 메소드를 사용해주겠습니다.
 
-## 
-- 
+## 인증 기능 구현을 위한 준비
+### CLI를 이용한 모듈, 컨트롤러, 서비스 생성
+- nest g module auth : auth 모듈 생성
+- nest g controller auth --no-spec : auth 컨트롤러 생성
+- nest g service auth --no-spec : auth 서비스 생성
+### User를 위한 Entity 생성
+- 유저에 대한 인증을 하는 것이니 유저가 필요합니다. -> Entity 생성해주겠습니다.
+1. user.entity.ts 파일 생성
+2. 파일 소스 코드 작성
+
+### Repository 생성
+- User Entity를 생성, 수정, 삭제 등의 로직을 처리하기 위해서 Repository를 생성합니다
+1. user.repository.ts 파일 생성
+2. 소스 코드 작성
+
 
