@@ -1,3 +1,11 @@
+따라하면서 배우는 NestJS 강의
+==============================
+
+# youtube 강의 
+- 230810 ~ 230817
+
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
