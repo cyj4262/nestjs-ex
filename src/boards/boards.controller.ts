@@ -1,6 +1,6 @@
 import { BoardStatus } from './board-status.enum';
 import { BoardsService } from './boards.service';
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UsePipes, ValidationPipe, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UsePipes, ValidationPipe, UseGuards, Logger } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
 import { Board } from './board.entity';
@@ -11,6 +11,7 @@ import { User } from 'src/auth/user.entity';
 @Controller('boards')
 @UseGuards(AuthGuard())
 export class BoardsController {
+    private logger = new Logger('BoardsController');
     constructor(private boardsService: BoardsService) { }
 
     // @Get('/')
@@ -22,6 +23,7 @@ export class BoardsController {
     getAllBoards(
         @GetUser() user: User,
     ): Promise<Board[]> {
+        this.logger.verbose(`User ${user.username} trying to get all boards`);
         return this.boardsService.getAllBoards(user);
     }
 
@@ -36,9 +38,11 @@ export class BoardsController {
 
     @Post()
     @UsePipes(ValidationPipe)
-    createBoard(@Body() CreateBoardDto: CreateBoardDto,
+    createBoard(@Body() createBoardDto: CreateBoardDto,
         @GetUser() user: User): Promise<Board> {
-        return this.boardsService.createBoard(CreateBoardDto, user);
+        this.logger.verbose(`User ${user.username} creating a new board.
+            Payload: ${JSON.stringify(createBoardDto)}`)
+        return this.boardsService.createBoard(createBoardDto, user);
     }
 
     @Get('/:id')
