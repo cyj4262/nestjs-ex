@@ -14,3 +14,28 @@
 - typeorm-ex.decorator.ts 와 typeorm-ex.module.ts 를 아래의 주소를 참고해 작성하여 0.3. 버전의  @EntityRepository가 deprecated 된 부분을 처리하였음
 - @EntityRepository 를 대체할 데코레이터를 따로 만듬
 - https://velog.io/@pk3669/typeorm-0.3.x-EntityRepository-%EB%8F%8C%EB%A0%A4%EC%A4%98
+
+## Delete request with 2 Params 
+- Repository.d.ts의 delete 함수에는 하나의 인수만 입력받게 되어있어서 강의에서 나오는
+```
+const query = await this.boardRepository.delete({id,user});
+```
+- 코드를 구현할 수가 없었다.
+- 그래서 createQueryBuilder 함수를 이용하여 자신이 생성한 게시문인지 유저id로 leftjoin하여 유저id가 작성한 board만 간추린 후 id를 비교하여 찾아내도록 구성하였다.
+<pre>
+<code>
+async deleteBoard(id: number, user: User): Promise<void> {
+
+        const query = this.boardRepository.createQueryBuilder("board")
+        .leftJoinAndSelect("board.user", "user", "user.id = :user1", { user1: user.id })
+        .where('board.id = :id', { id })  
+        .delete();
+
+        const result = await query.execute();
+
+        if (result.affected === 0) {
+            throw new NotFoundException(`Can't find Board with id ${id}`)
+        }
+    }
+</code>
+</pre>

@@ -63,18 +63,17 @@ export class BoardsService {
     // }
 
     async deleteBoard(id: number, user: User): Promise<void> {
-        const result = await this.boardRepository.delete(id);
+        //const query = await this.boardRepository.delete({id,user});
 
+        const query = this.boardRepository.createQueryBuilder("board")
+        .leftJoinAndSelect("board.user", "user", "user.id = :user1", { user1: user.id })
+        .where('board.id = :id', { id })  
+        .delete();
 
-        const query = this.boardRepository.createQueryBuilder('board').delete()
-            .where('board.userId = :userId', { userId: user.id })
-            .andWhere('board.id = :id', { id });
-        //.where('board.id = :id', {id});
-        //const boards = await query.getMany();
-        //console.log(boards);
-        //const result = await query.execute();
+        const result = await query.execute();
+
         // await this.boardRepository.createQueryBuilder('board')
-        //     //.leftJoin('board.userId', 'userId')
+        //     .leftJoin('board.userId', 'userId')
         //     .where('board.userId = :userId', { userId: user.id })
         //     .andWhere('board.id = :id', { id })
         //     .delete()
